@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 from openai import OpenAI
@@ -15,9 +15,9 @@ settings = Settings()
 
 client = OpenAI(api_key=settings.api_key)
 
-app = FastAPI(
-    prefix="/api/v1"
-)
+app = FastAPI()
+
+api_router = APIRouter(prefix="/api/v1")
 
 def parse_api_response(raw_response: str):
     # Remove the "json" prefix if it exists
@@ -209,14 +209,14 @@ Output ONLY the completed JSON array without any additional text, prefixes, or l
     return prompt
 
 
-@app.get("/")
+@api_router.get("/")
 def root():
     return {
         "message": "the API is running ..."
     }
 
 
-@app.post("/generate_recipe")
+@api_router.post("/generate_recipe")
 async def generate_recipe(recipe_request: RecipeRequest):
     # Build the prompt by formatting the template with the user inputs.
     prompt = generate_recipes(
@@ -270,6 +270,8 @@ async def generate_recipe(recipe_request: RecipeRequest):
     except Exception as e:
         # Return an HTTP error if the API call fails.
         raise HTTPException(status_code=500, detail=str(e))
+
+app.include_router(api_router)
 
 if __name__ == "__main__":
     import uvicorn
