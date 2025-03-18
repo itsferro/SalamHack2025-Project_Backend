@@ -15,7 +15,9 @@ settings = Settings()
 
 client = OpenAI(api_key=settings.api_key)
 
-app = FastAPI()
+app = FastAPI(
+    prefix="/api/v1"
+)
 
 def parse_api_response(raw_response: str):
     # Remove the "json" prefix if it exists
