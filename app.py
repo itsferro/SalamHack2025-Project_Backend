@@ -1,15 +1,19 @@
 import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from pydantic_settings import BaseSettings
 from openai import OpenAI
-from dotenv import load_dotenv
-import os
 
 
-load_dotenv()
+class Settings(BaseSettings):
+    api_key: str
 
+    class Config:
+        env_file = ".env"
 
-client = OpenAI(os.getenv("API_KEY"))
+settings = Settings()
+
+client = OpenAI(api_key=settings.api_key)
 
 app = FastAPI()
 
@@ -62,7 +66,7 @@ def generate_recipes(
         dietary_restrictions=None, 
         allergies=None,
         nutritional_preferences=None,
-        num_meals=1
+        num_meals=4
         ) -> None:
     
     # Convert list parameters to strings if needed
