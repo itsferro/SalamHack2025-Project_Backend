@@ -1,3 +1,5 @@
 .env
 salam-hack2025_env
-
+openai_models.py
+__*
+.env
