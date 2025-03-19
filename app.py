@@ -15,7 +15,16 @@ settings = Settings()
 
 client = OpenAI(api_key=settings.api_key)
 
-app = FastAPI()
+app = FastAPI(title="Cuisine API", docs_url="/api/v1/documentation", redoc_url=None)
+
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 api_router = APIRouter(prefix="/api/v1")
 
